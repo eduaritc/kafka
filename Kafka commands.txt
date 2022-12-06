@@ -1,0 +1,42 @@
+# command necessary to launch spark shell and make it recognise kafka-console-producer
+spark-shell --packages "org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.7","com.lihaoyi:requests_2.11:0.7.1"
+
+# Create Kafka Topic
+kafka-topics --bootstrap-server master1.internal.cloudapp.net:9092, worker1.internal.cloudapp.net:9092, worker2.internal.cloudapp.net:9092, worker3.internal.cloudapp.net:9092 --create --topic topic_name
+
+# Read Kafka Topic
+kafka-topics --bootstrap-server master1.internal.cloudapp.net:9092, master2.internal.cloudapp.net:9092, worker1.internal.cloudapp.net:9092, worker2.internal.cloudapp.net:9092, worker3.internal.cloudapp.net:9092  --describe --topic topic_name
+
+# Producer Writing
+kafka-console-producer --broker-list master1.internal.cloudapp.net:9092, master2.internal.cloudapp.net:9092, worker1.internal.cloudapp.net:9092, worker2.internal.cloudapp.net:9092, worker3.internal.cloudapp.net:9092 --topic topic_name
+
+# Consumer Listeningkafka-console-consumer --topic topic_name --bootstrap-server master1.internal.cloudapp.net:9092, master2.internal.cloudapp.net:9092, worker1.internal.cloudapp.net:9092, worker2.internal.cloudapp.net:9092, worker3.internal.cloudapp.net:9092
+
+
+# Kafka using key:value | producer
+kafka-console-producer --broker-list master1.internal.cloudapp.net:9092, master2.internal.cloudapp.net:9092, worker1.internal.cloudapp.net:9092, worker2.internal.cloudapp.net:9092, worker3.internal.cloudapp.net:9092 --topic topic_name --property "parse.key=true" --property "key.separator=:"
+
+# Kafka using key:value | consumer
+kafka-console-consumer  --bootstrap-server master1.internal.cloudapp.net:9092, master2.internal.cloudapp.net:9092, worker1.internal.cloudapp.net:9092, worker2.internal.cloudapp.net:9092, worker3.internal.cloudapp.net:9092 --topic topic_name --property print.key=true --property key.separator=":" --from-beginning
+
+# setting the replication factor up
+kafka-topics --bootstrap-server master1.internal.cloudapp.net:9092, master2.internal.cloudapp.net:9092, worker1.internal.cloudapp.net:9092, worker2.internal.cloudapp.net:9092, worker3.internal.cloudapp.net:9092 --topic topic_name --create --partitions 2 --replication-factor 1
+
+# Kafka using groups | consumer 1
+kafka-console-consumer  --bootstrap-server master1.internal.cloudapp.net:9092, master2.internal.cloudapp.net:9092, worker1.internal.cloudapp.net:9092, worker2.internal.cloudapp.net:9092, worker3.internal.cloudapp.net:9092 --topic topic_name --property print.key=true --property key.separator=":" --from-beginning --group group_name
+
+# Kafka using groups | consumer 2
+kafka-console-consumer  --bootstrap-server master1.internal.cloudapp.net:9092, master2.internal.cloudapp.net:9092, worker1.internal.cloudapp.net:9092, worker2.internal.cloudapp.net:9092, worker3.internal.cloudapp.net:9092 --topic topic_name --property print.key=true --property key.separator=":" --from-beginning --group group_name
+
+# Kafka using groups | producer
+kafka-console-producer --broker-list master1.internal.cloudapp.net:9092, master2.internal.cloudapp.net:9092, worker1.internal.cloudapp.net:9092, worker2.internal.cloudapp.net:9092, worker3.internal.cloudapp.net:9092 --topic topic_name --property "parse.key=true" --property "key.separator=:"
+
+# list consumer group
+kafka-consumer-groups --bootstrap-server master1.internal.cloudapp.net:9092, master2.internal.cloudapp.net:9092, worker1.internal.cloudapp.net:9092, worker2.internal.cloudapp.net:9092, worker3.internal.cloudapp.net:9092 --list --state
+
+# You can instead of using --all-groups just specify the command for one group only.
+kafka-consumer-groups --bootstrap-server localhost:9092 --describe --all-groups --state
+
+# delete consumer group
+kafka-consumer-groups --bootstrap-server localhost:9092 --delete --group my-first-application
+
